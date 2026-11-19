@@ -106,7 +106,9 @@ img{display:block;max-width:100%}
 .monogram .mandala{position:absolute;inset:0;color:var(--gold-l);animation:spin 60s linear infinite}
 .monogram b{position:relative;font-family:var(--script);font-weight:400;font-size:2.7rem;line-height:1}
 .tag{margin:0 0 4px;font-family:var(--royal);font-weight:700;font-size:.6rem;letter-spacing:.4em;color:var(--gold-l)}
-.opening-bottom h1{margin:0 0 22px;font-family:var(--script);font-weight:400;font-size:2.5rem;line-height:1.4}
+.opening-names{margin:0 0 22px;line-height:1.35}
+.opening-names .foil{font-family:var(--script);font-weight:400;font-size:2.35rem;letter-spacing:.02em}
+.opening-names .opening-weds{display:block;margin:6px 0;font-family:var(--serif);font-style:italic;font-weight:500;font-size:1.25rem;letter-spacing:.28em;color:var(--gold-l)}
 .btn-gold{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-width:230px;padding:16px 26px;border:0;border-radius:999px;cursor:pointer;
   background:linear-gradient(180deg,#f7e6b6,#c99a45 55%,#a87a32);color:var(--m3);font-family:var(--royal);font-weight:700;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;
   box-shadow:0 0 0 1px #fff3cf inset,0 0 0 4px rgba(201,160,80,.25),0 12px 30px rgba(0,0,0,.45);overflow:hidden}
@@ -254,7 +256,8 @@ footer .thanks{margin:20px auto 0;max-width:300px;font-style:italic;font-size:1.
 footer .names{font-size:2.2rem;line-height:1.3}
 footer .names .amp,.hero-copy h2 .amp{font-family:var(--deco);font-style:normal;font-size:1.6rem;line-height:1.3}
 .seal span{font-family:var(--deco);font-style:normal;font-size:1.3rem}
-.opening-bottom h1{font-size:1.3rem;letter-spacing:.06em;line-height:1.5}
+.opening-names .foil{font-size:2rem}
+.opening-names .opening-weds{font-size:1.05rem}
 .reveal em{font-family:var(--deco);font-size:.95rem;letter-spacing:.12em;margin-top:6px}
 .reveal strong{font-size:4.4rem}
 .lead,.person p,.fam p,.cd-date,.hint,.thanks,.ev-rows span{font-style:normal;font-size:.9rem;line-height:1.75;letter-spacing:.03em}
@@ -316,7 +319,7 @@ footer.royal{padding-top:70px}
     <div class="opening-top"><p class="hindi">॥ श्री गणेशाय नमः ॥</p></div>
     <div class="opening-bottom">
       <p class="tag">YOU ARE CORDIALLY INVITED</p>
-      <h1 class="foil">Tanya Weds Prabhat</h1><br>
+      <h1 class="opening-names" aria-label="Tanya Weds Prabhat"><span class="foil">Tanya</span><span class="opening-weds">Weds</span><span class="foil">Prabhat</span></h1>
       <button class="btn-gold" id="openInvite" type="button">Open Invitation</button>
     </div>
   </div>
@@ -439,7 +442,7 @@ footer.royal{padding-top:70px}
   <footer class="royal low">
     
     <p class="names"><span class="foil">Tanya</span><span class="amp"><span class="foil">&amp;</span></span><span class="foil">Prabhat</span></p>
-    <p class="hash">#TanyaWedsPrabhat</p>
+    <p class="hash">Tanya Weds Prabhat</p>
     <small>14 DECEMBER 2026 · PILKHUWA</small>
     <p class="thanks">Your presence is the most precious gift for us.</p>
   </footer>

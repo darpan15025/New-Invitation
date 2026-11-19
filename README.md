@@ -2,6 +2,11 @@
 
 Wedding invitation for **Aarav & Kiara** (`index.html`) — same as live site, with the **events week section removed** (Mehndi, Haldi, Sangeet, Wedding card, Reception).
 
-**Live preview (updates from GitHub):** https://raw.githack.com/darpan15025/New-Invitation/main/index.html
+**Preview (latest code):**  
+https://htmlpreview.github.io/?https://github.com/darpan15025/New-Invitation/raw/main/index.html
 
-JoyInvite (`shaadicanvas.joyinvite.in`) does **not** auto-sync from GitHub — re-upload `index.html` in the JoyInvite editor for that link to match.
+**Download file for JoyInvite upload:**  
+https://github.com/darpan15025/New-Invitation/raw/main/index.html  
+(Right-click → Save As → replace on JoyInvite / `shaadicanvas.joyinvite.in`)
+
+`joyinvite.in` does **not** pull from GitHub automatically. Until you upload, that URL still shows the old `#AaravWedsKiara` page.

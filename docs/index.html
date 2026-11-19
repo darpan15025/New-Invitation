@@ -424,7 +424,7 @@ footer.royal{padding-top:70px}
         <div class="u"><strong id="seconds">00</strong><span>SECONDS</span></div>
       </div>
     </div>
-    <p class="cd-date rv">Monday · 14 December 2026 · Pilkhuwa</p>
+    <p class="cd-date rv">Until Baraat · Monday, 14 December 2026 · 7:00 PM · Pilkhuwa</p>
   </section>
 
   <section class="royal low" id="venue">
@@ -550,7 +550,8 @@ function startReveals(){
 }
 
 /* ---------- Countdown ---------- */
-const weddingTime=new Date('2026-12-14T21:00:00+05:30').getTime();
+// Countdown → first celebration: Baraat, 14 Dec 2026, 7:00 PM IST
+const weddingTime=new Date('2026-12-14T19:00:00+05:30').getTime();
 function tick(){
   const r=Math.max(0,weddingTime-Date.now());
   const v={days:Math.floor(r/864e5),hours:Math.floor(r/36e5%24),minutes:Math.floor(r/6e4%60),seconds:Math.floor(r/1e3%60)};

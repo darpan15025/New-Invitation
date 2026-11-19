@@ -1,8 +1,5 @@
 # New-Invitation
 
-Static wedding invitation for **Aarav & Kiara** (`index.html`).
-
-- All JavaScript / interactive features removed (open screen, countdown, scratch card, petals, etc.)
-- Events section shows **Wedding** ceremony only
+Wedding invitation for **Aarav & Kiara** (`index.html`) — same as live site, with the **events week section removed** (Mehndi, Haldi, Sangeet, Wedding card, Reception).
 
 Deploy `index.html` to your host (e.g. `shaadicanvas.joyinvite.in`).

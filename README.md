@@ -2,11 +2,9 @@
 
 Wedding invitation for **Aarav & Kiara** (`index.html`) — same as live site, with the **events week section removed** (Mehndi, Haldi, Sangeet, Wedding card, Reception).
 
-**Preview (latest code):**  
-https://htmlpreview.github.io/?https://github.com/darpan15025/New-Invitation/raw/main/index.html
+**Shareable link (after one-time setup):** https://darpan15025.github.io/New-Invitation/  
+→ Enable in [Repo Pages settings](https://github.com/darpan15025/New-Invitation/settings/pages): branch **`main`**, folder **`/docs`**. Details: [PREVIEW.md](PREVIEW.md)
 
-**Download file for JoyInvite upload:**  
-https://github.com/darpan15025/New-Invitation/raw/main/index.html  
-(Right-click → Save As → replace on JoyInvite / `shaadicanvas.joyinvite.in`)
+**JoyInvite upload file:** https://github.com/darpan15025/New-Invitation/raw/main/index.html
 
-`joyinvite.in` does **not** pull from GitHub automatically. Until you upload, that URL still shows the old `#AaravWedsKiara` page.
+htmlpreview often **does not open** this file (size + embedded images). Use GitHub Pages or local `python3 -m http.server`.

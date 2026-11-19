@@ -80,7 +80,10 @@ img{display:block;max-width:100%}
 .box{border:1px solid rgba(201,160,80,.7)}
 /* vintage frame box */
 /* name plate */
-.fam-wrap{padding-bottom:50px}
+.fam-wrap{display:flex;flex-direction:column;padding-bottom:50px}
+.fam-wrap .fam-bride{order:1}
+.fam-wrap .fleur{order:2}
+.fam-wrap .fam-groom{order:3}
 .sframe{position:relative;padding:22px 10px;margin-top:6px}
 .cdbox{padding:22px 12px 20px;margin-top:26px}.cdbox .cd{margin-top:0}
 .vbox{margin-top:22px;padding:34px 18px 30px}
@@ -342,9 +345,9 @@ footer.royal{padding-top:70px}
     <i class="dv rv"></i>
     <p class="lead rv">With immense joy in our hearts, we invite you to grace the wedding of</p>
     <div class="couple rv">
-      <div class="person"><small>THE BRIDE</small><strong><span class="foil">Tanya</span></strong><p>Daughter of Mr. Rajeev Goel &amp; Mrs. Babeeta Goel</p></div>
+      <div class="person"><small>THE BRIDE</small><strong><span class="foil">Tanya</span></strong><p>Daughter of Mrs. Babeeta Goel &amp; Mr. Rajeev Goel</p></div>
       <div class="seal"><svg class="mandala" data-mandala="b" viewBox="0 0 200 200"></svg><span>&amp;</span></div>
-      <div class="person"><small>THE GROOM</small><strong><span class="foil">Prabhat</span></strong><p>Son of Mr. Lokesh Mohan Goyal &amp; Mrs. Monika Goyal</p></div>
+      <div class="person"><small>THE GROOM</small><strong><span class="foil">Prabhat</span></strong><p>Son of Mrs. Monika Goyal &amp; Mr. Lokesh Mohan Goyal</p></div>
     </div>
     <p class="city rv">PILKHUWA · UTTAR PRADESH</p>
   </section>
@@ -371,9 +374,9 @@ footer.royal{padding-top:70px}
     <p class="eyebrow rv">With the blessings of</p>
     <h2 class="title rv">Our Beloved Families</h2>
     <i class="dv rv"></i>
-    <article class="fam rv"><small>BRIDE'S PARENTS</small><h3><span class="foil">Mrs. Babeeta Goel &amp; Mr. Rajeev Goel</span></h3><p>joyfully invite you to bless the couple</p></article>
-    <i class="fleur rv"></i>
-    <article class="fam rv"><small>GROOM'S PARENTS</small><h3><span class="foil">Mrs. Monika Goyal &amp; Mr. Lokesh Mohan Goyal</span></h3><p>and share in this cherished celebration</p></article>
+    <article class="fam fam-bride rv in"><small>BRIDE'S PARENTS</small><h3><span class="foil">Mrs. Babeeta Goel &amp; Mr. Rajeev Goel</span></h3><p>joyfully invite you to bless the couple</p></article>
+    <i class="fleur rv in"></i>
+    <article class="fam fam-groom rv in"><small>GROOM'S PARENTS</small><h3><span class="foil">Mrs. Monika Goyal &amp; Mr. Lokesh Mohan Goyal</span></h3><p>and share in this cherished celebration</p></article>
   </section>
 <section class="royal">
     <svg class="mbg" data-mandala="b" viewBox="0 0 200 200"></svg>

@@ -514,6 +514,25 @@ function tinted(img,color,size){
 /* ---------- Corner ornaments ---------- */
 document.querySelectorAll('[data-c]').forEach(el=>{['tl','tr','bl','br'].forEach(p=>{const k=document.createElement('i');k.className=`k ${p} g-${el.dataset.c}`;el.appendChild(k)})});
 
+/* ---------- Smooth scroll helper ---------- */
+function easeInOutCubic(t){return t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+function smoothScrollTo(targetY,durationMs){
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const start=window.scrollY||document.documentElement.scrollTop;
+  const dist=targetY-start;
+  if(reduce||Math.abs(dist)<6){window.scrollTo(0,targetY);document.documentElement.scrollTop=targetY;document.body.scrollTop=targetY;return;}
+  const t0=performance.now();
+  function step(now){
+    const p=Math.min(1,(now-t0)/durationMs);
+    const y=start+dist*easeInOutCubic(p);
+    window.scrollTo(0,y);
+    document.documentElement.scrollTop=y;
+    document.body.scrollTop=y;
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 /* ---------- Opening ---------- */
 const opening=document.getElementById('opening'),invite=document.getElementById('invite'),dock=document.getElementById('dock');
 document.getElementById('openInvite').addEventListener('click',()=>{
@@ -530,20 +549,9 @@ document.getElementById('openInvite').addEventListener('click',()=>{
   setTimeout(()=>{
     const inv=document.getElementById('invitation');
     if(!inv)return;
-    const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const behavior=reduce?'auto':'smooth';
-    const y=()=>inv.getBoundingClientRect().top+window.scrollY-Math.min(64,window.innerHeight*.1);
-    window.scrollTo({top:0,left:0,behavior:'auto'});
-    requestAnimationFrame(()=>{
-      requestAnimationFrame(()=>{
-        try{inv.scrollIntoView({behavior,block:'start',inline:'nearest'});}catch(_){/* older browsers */}
-        const top=Math.max(0,y());
-        window.scrollTo({top,left:0,behavior});
-        document.documentElement.scrollTop=top;
-        document.body.scrollTop=top;
-      });
-    });
-  },2000);
+    const top=Math.max(0,inv.getBoundingClientRect().top+window.scrollY-Math.min(64,window.innerHeight*.1));
+    smoothScrollTo(top,2800);
+  },4000);
 });
 
 /* ---------- Petals & sparks ---------- */

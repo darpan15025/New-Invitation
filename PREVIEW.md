@@ -36,4 +36,4 @@ To use another file or URL, edit `MUSIC_SRC` in `index.html`.
 
 ## Fireworks
 
-Tap **Fireworks** (top-right) to turn celebration bursts on or off.
+**Fireworks** are **on by default** after **Open Invitation** (off if reduced-motion is set). Use the top-right button to toggle.

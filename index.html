@@ -341,7 +341,7 @@ footer.royal{padding-top:70px}
 <canvas id="fireworksCanvas" aria-hidden="true"></canvas>
 <div class="fx-panel" id="fxPanel" role="group" aria-label="Music and fireworks">
   <button type="button" class="fx-btn on" id="musicToggle" aria-pressed="true" title="Background music"><svg aria-hidden="true"><use href="#i-music"/></svg><span>Music</span></button>
-  <button type="button" class="fx-btn" id="fwToggle" aria-pressed="false" title="Fireworks"><svg aria-hidden="true"><use href="#i-firework"/></svg><span>Fireworks</span></button>
+  <button type="button" class="fx-btn on" id="fwToggle" aria-pressed="true" title="Fireworks"><svg aria-hidden="true"><use href="#i-firework"/></svg><span>Fireworks</span></button>
 </div>
 <audio id="weddingMusic" loop preload="auto" playsinline></audio>
 
@@ -526,6 +526,7 @@ document.getElementById('openInvite').addEventListener('click',()=>{
   setTimeout(()=>{petalBurst(24);drawCover();},500);
   setInterval(()=>petalBurst(3),2600);
   tryStartMusic();
+  tryStartFireworks();
 });
 
 /* ---------- Petals & sparks ---------- */
@@ -663,6 +664,7 @@ btnMusic.addEventListener('click',()=>setMusic(!musicOn));
 window.tryStartMusic=tryStartMusic;
 
 (()=>{
+  const FIREWORKS_DEFAULT_ON=true;
   if(!fwCanvas||window.matchMedia('(prefers-reduced-motion: reduce)').matches){if(btnFw)btnFw.disabled=true;return;}
   const ctx=fwCanvas.getContext('2d');
   let particles=[],spawnTimer=null,raf=0,running=false,appRect=()=>fwCanvas.getBoundingClientRect();
@@ -706,6 +708,8 @@ window.tryStartMusic=tryStartMusic;
     if(spawnTimer)clearInterval(spawnTimer),spawnTimer=null;
   }
   btnFw.addEventListener('click',()=>fwOn?stopFw():startFw());
+  function tryStartFireworks(){if(FIREWORKS_DEFAULT_ON)startFw();}
+  window.tryStartFireworks=tryStartFireworks;
   document.getElementById('openInvite').addEventListener('click',()=>{if(fwOn)setTimeout(shoot,400);});
 })();
 </script>

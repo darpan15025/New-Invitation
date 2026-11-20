@@ -30,7 +30,7 @@
   --jaali:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23c9a050' stroke-width='.8'%3E%3Cpath d='M22 2c6 6 6 14 0 20-6-6-6-14 0-20zM22 22c6 6 6 14 0 20-6-6-6-14 0-20zM2 22c6-6 14-6 20 0-6 6-14 6-20 0zM22 22c6-6 14-6 20 0-6 6-14 6-20 0z'/%3E%3Ccircle cx='22' cy='22' r='2.2'/%3E%3Ccircle cx='0' cy='0' r='3'/%3E%3Ccircle cx='44' cy='0' r='3'/%3E%3Ccircle cx='0' cy='44' r='3'/%3E%3Ccircle cx='44' cy='44' r='3'/%3E%3C/g%3E%3C/svg%3E");
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth;background:var(--m4)}
+html{scroll-behavior:auto;background:var(--m4)}
 body{margin:0;min-height:100svh;color:var(--txt);font-family:var(--serif);font-weight:500;-webkit-font-smoothing:antialiased;overflow-x:hidden;background:var(--m4)}
 body.locked,html.locked{overflow:hidden;height:100svh;touch-action:none}
 button,a{-webkit-tap-highlight-color:transparent}
@@ -515,25 +515,46 @@ function tinted(img,color,size){
 document.querySelectorAll('[data-c]').forEach(el=>{['tl','tr','bl','br'].forEach(p=>{const k=document.createElement('i');k.className=`k ${p} g-${el.dataset.c}`;el.appendChild(k)})});
 
 /* ---------- Smooth scroll helper ---------- */
-let inviteScrollRaf=0;
+let inviteScrollRaf=0,inviteScrollTimer=0,autoScrollActive=false,releaseAutoScrollCancel=null;
 function easeInOutQuint(t){return t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;}
+function cancelInviteAutoScroll(){
+  autoScrollActive=false;
+  if(inviteScrollRaf){cancelAnimationFrame(inviteScrollRaf);inviteScrollRaf=0;}
+  if(inviteScrollTimer){clearTimeout(inviteScrollTimer);inviteScrollTimer=0;}
+  if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}
+}
+function armAutoScrollCancel(){
+  if(releaseAutoScrollCancel)releaseAutoScrollCancel();
+  const cancel=()=>{if(autoScrollActive||inviteScrollTimer)cancelInviteAutoScroll();};
+  const keys=new Set(['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' ']);
+  const onKey=e=>{if(keys.has(e.key))cancel();};
+  const opts={passive:true,capture:true};
+  window.addEventListener('wheel',cancel,opts);
+  window.addEventListener('touchmove',cancel,opts);
+  window.addEventListener('pointerdown',cancel,opts);
+  window.addEventListener('keydown',onKey);
+  releaseAutoScrollCancel=()=>{
+    window.removeEventListener('wheel',cancel,opts);
+    window.removeEventListener('touchmove',cancel,opts);
+    window.removeEventListener('pointerdown',cancel,opts);
+    window.removeEventListener('keydown',onKey);
+  };
+}
 function smoothScrollTo(targetY,durationMs){
-  if(inviteScrollRaf)cancelAnimationFrame(inviteScrollRaf);
+  cancelInviteAutoScroll();
   const root=document.documentElement;
-  const prevHtml=root.style.scrollBehavior;
-  const prevBody=document.body.style.scrollBehavior;
-  root.style.scrollBehavior='auto';
-  document.body.style.scrollBehavior='auto';
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const start=window.pageYOffset||root.scrollTop||0;
   const dist=targetY-start;
-  const finish=()=>{root.style.scrollBehavior=prevHtml;document.body.style.scrollBehavior=prevBody;inviteScrollRaf=0;};
+  const finish=()=>{autoScrollActive=false;inviteScrollRaf=0;if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}};
   if(reduce||Math.abs(dist)<4){window.scrollTo(0,targetY);finish();return;}
+  autoScrollActive=true;
+  armAutoScrollCancel();
   const t0=performance.now();
   const tick=(now)=>{
+    if(!autoScrollActive)return;
     const p=Math.min(1,(now-t0)/durationMs);
-    const eased=easeInOutQuint(p);
-    const y=start+dist*eased;
+    const y=start+dist*easeInOutQuint(p);
     window.scrollTo({top:y,left:0,behavior:'auto'});
     if(p<1)inviteScrollRaf=requestAnimationFrame(tick);
     else{window.scrollTo({top:targetY,left:0,behavior:'auto'});finish();}
@@ -554,7 +575,9 @@ document.getElementById('openInvite').addEventListener('click',()=>{
   setInterval(()=>petalBurst(3),2600);
   tryStartMusic();
   tryStartFireworks();
-  setTimeout(()=>{
+  armAutoScrollCancel();
+  inviteScrollTimer=setTimeout(()=>{
+    inviteScrollTimer=0;
     const inv=document.getElementById('invitation');
     if(!inv)return;
     const top=Math.max(0,inv.getBoundingClientRect().top+window.scrollY-Math.min(64,window.innerHeight*.1));
@@ -592,10 +615,15 @@ function startReveals(){
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
   document.querySelectorAll('.rv').forEach(el=>io.observe(el));
   const links=[...dock.querySelectorAll('a')],secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+  let scrollRaf=0;
   const onScroll=()=>{
-    dock.classList.toggle('show',window.scrollY>window.innerHeight*.5);
-    let idx=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<window.innerHeight*.45)idx=i});
-    links.forEach((a,i)=>a.classList.toggle('on',i===idx));
+    if(scrollRaf)return;
+    scrollRaf=requestAnimationFrame(()=>{
+      scrollRaf=0;
+      dock.classList.toggle('show',window.scrollY>window.innerHeight*.5);
+      let idx=0;secs.forEach((s,i)=>{if(s.getBoundingClientRect().top<window.innerHeight*.45)idx=i});
+      links.forEach((a,i)=>a.classList.toggle('on',i===idx));
+    });
   };
   window.addEventListener('scroll',onScroll,{passive:true});onScroll();
 }

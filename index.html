@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="locked">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -32,12 +32,12 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;background:var(--m4)}
 body{margin:0;min-height:100svh;color:var(--txt);font-family:var(--serif);font-weight:500;-webkit-font-smoothing:antialiased;overflow-x:hidden;background:var(--m4)}
-body.locked{overflow:hidden;height:100svh}
+body.locked,html.locked{overflow:hidden;height:100svh;touch-action:none}
 button,a{-webkit-tap-highlight-color:transparent}
 button{font:inherit;color:inherit}
 img{display:block;max-width:100%}
 
-.app{position:relative;width:100%;max-width:var(--app);margin:0 auto;min-height:100svh;background:var(--m3);overflow:hidden;box-shadow:0 0 0 1px rgba(201,160,80,.35),0 0 90px rgba(0,0,0,.7)}
+.app{position:relative;width:100%;max-width:var(--app);margin:0 auto;min-height:100svh;background:var(--m3);overflow-x:hidden;overflow-y:visible;box-shadow:0 0 0 1px rgba(201,160,80,.35),0 0 90px rgba(0,0,0,.7)}
 
 /* gold foil text: padding stops script swashes from getting clipped */
 .foil{display:inline-block;padding:.08em .22em .14em;margin:0 -.22em;background:var(--foil);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:foil 7s linear infinite}
@@ -368,7 +368,7 @@ footer.royal{padding-top:70px}
     <div class="couple rv">
       <div class="person"><small>THE BRIDE</small><strong><span class="foil">Tanya</span></strong><p>Daughter of<br>Mrs. Babeeta Goel<br>&amp;<br>Mr. Rajeev Goel</p></div>
       <div class="seal"><svg class="mandala" data-mandala="b" viewBox="0 0 200 200"></svg><span>&amp;</span></div>
-      <div class="person"><small>THE GROOM</small><strong><span class="foil">Prabhat</span></strong><p>Son of<br>Mrs. Monika Goel<br>&amp;<br>Mr. Lokesh Mohan Goyal</p></div>
+      <div class="person"><small>THE GROOM</small><strong><span class="foil">Prabhat</span></strong><p>Son of<br>Mrs. Monika Goel<br>&amp;<br>Mr. Lokesh Mohan Goel</p></div>
     </div>
     <p class="city rv">PILKHUWA · UTTAR PRADESH</p>
   </section>
@@ -397,7 +397,7 @@ footer.royal{padding-top:70px}
     <i class="dv rv"></i>
     <article class="fam fam-bride rv in"><small>BRIDE'S PARENTS</small><h3><span class="foil">Mrs. Babeeta Goel</span><span class="fam-amp">&amp;</span><span class="foil">Mr. Rajeev Goel</span></h3><p>joyfully invite you to bless the couple</p></article>
     <i class="fleur rv in"></i>
-    <article class="fam fam-groom rv in"><small>GROOM'S PARENTS</small><h3><span class="foil">Mrs. Monika Goel</span><span class="fam-amp">&amp;</span><span class="foil">Mr. Lokesh Mohan Goyal</span></h3><p>and share in this cherished celebration</p></article>
+    <article class="fam fam-groom rv in"><small>GROOM'S PARENTS</small><h3><span class="foil">Mrs. Monika Goel</span><span class="fam-amp">&amp;</span><span class="foil">Mr. Lokesh Mohan Goel</span></h3><p>and share in this cherished celebration</p></article>
   </section>
 
   <section class="royal low" id="events">
@@ -521,12 +521,29 @@ document.getElementById('openInvite').addEventListener('click',()=>{
   opening.classList.add('done');
   invite.classList.add('open');invite.setAttribute('aria-hidden','false');
   document.body.classList.remove('locked');
-  window.scrollTo({top:0,behavior:'instant'});
+  document.documentElement.classList.remove('locked');
   startReveals();
   setTimeout(()=>{petalBurst(24);drawCover();},500);
   setInterval(()=>petalBurst(3),2600);
   tryStartMusic();
   tryStartFireworks();
+  setTimeout(()=>{
+    const inv=document.getElementById('invitation');
+    if(!inv)return;
+    const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const behavior=reduce?'auto':'smooth';
+    const y=()=>inv.getBoundingClientRect().top+window.scrollY-Math.min(64,window.innerHeight*.1);
+    window.scrollTo({top:0,left:0,behavior:'auto'});
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{
+        try{inv.scrollIntoView({behavior,block:'start',inline:'nearest'});}catch(_){/* older browsers */}
+        const top=Math.max(0,y());
+        window.scrollTo({top,left:0,behavior});
+        document.documentElement.scrollTop=top;
+        document.body.scrollTop=top;
+      });
+    });
+  },2000);
 });
 
 /* ---------- Petals & sparks ---------- */

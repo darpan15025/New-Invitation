@@ -700,7 +700,7 @@ window.tryStartMusic=tryStartMusic;
     btnFw.classList.add('on');btnFw.setAttribute('aria-pressed','true');
     if(!raf)loop();
     shoot();shoot();
-    spawnTimer=setInterval(()=>{if(fwOn)shoot();},2400);
+    spawnTimer=setInterval(()=>{if(fwOn)shoot();},4000);
   }
   function stopFw(){
     fwOn=false;running=false;

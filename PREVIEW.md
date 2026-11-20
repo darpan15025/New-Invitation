@@ -27,10 +27,10 @@ Browser: http://127.0.0.1:8765/index.html
 Download: https://github.com/darpan15025/New-Invitation/raw/main/index.html  
 Upload on JoyInvite dashboard → `shaadicanvas.joyinvite.in`
 
-## Music (optional)
+## Music
 
-1. Add an MP3 named **`wedding-music.mp3`** in the same folder as `index.html` (soft instrumental works best).
-2. Tap **Music** (top-right) after opening the invite — browsers require a tap to play audio.
+1. **`wedding-music.mp3`** is included (Shri Raghuvar / *chakit chit* jaimala bhajan, ~5 min). Keep it in the same folder as `index.html`.
+2. Music is **on by default** and starts when guests tap **Open Invitation** (browser autoplay rules). Use the **Music** button (top-right) to turn it off.
 
 To use another file or URL, edit `MUSIC_SRC` in `index.html`.
 

@@ -17,6 +17,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html _site/
+          cp -f wedding-music.mp3 _site/ 2>/dev/null || true
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:

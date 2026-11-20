@@ -340,10 +340,10 @@ footer.royal{padding-top:70px}
 <div class="petals"><div class="petals-in" id="petals"></div></div>
 <canvas id="fireworksCanvas" aria-hidden="true"></canvas>
 <div class="fx-panel" id="fxPanel" role="group" aria-label="Music and fireworks">
-  <button type="button" class="fx-btn" id="musicToggle" aria-pressed="false" title="Background music"><svg aria-hidden="true"><use href="#i-music"/></svg><span>Music</span></button>
+  <button type="button" class="fx-btn on" id="musicToggle" aria-pressed="true" title="Background music"><svg aria-hidden="true"><use href="#i-music"/></svg><span>Music</span></button>
   <button type="button" class="fx-btn" id="fwToggle" aria-pressed="false" title="Fireworks"><svg aria-hidden="true"><use href="#i-firework"/></svg><span>Fireworks</span></button>
 </div>
-<audio id="weddingMusic" loop preload="none" playsinline></audio>
+<audio id="weddingMusic" loop preload="auto" playsinline></audio>
 
 <div class="app">
 <div class="invite" id="invite" aria-hidden="true">
@@ -525,6 +525,7 @@ document.getElementById('openInvite').addEventListener('click',()=>{
   startReveals();
   setTimeout(()=>{petalBurst(24);drawCover();},500);
   setInterval(()=>petalBurst(3),2600);
+  tryStartMusic();
 });
 
 /* ---------- Petals & sparks ---------- */
@@ -632,25 +633,32 @@ mandA.onload=drawCover;
 
 /* ---------- Optional music & fireworks ---------- */
 const MUSIC_SRC='wedding-music.mp3';
+const MUSIC_DEFAULT_ON=true;
 const audioEl=document.getElementById('weddingMusic');
 const btnMusic=document.getElementById('musicToggle');
 const btnFw=document.getElementById('fwToggle');
 const fwCanvas=document.getElementById('fireworksCanvas');
 if(MUSIC_SRC)audioEl.src=MUSIC_SRC;
 else btnMusic.disabled=true;
-let musicOn=false,fwOn=false;
+let musicOn=!!(MUSIC_SRC&&MUSIC_DEFAULT_ON),musicPlaying=false,fwOn=false;
 
-btnMusic.addEventListener('click',async()=>{
+async function setMusic(on){
   if(!MUSIC_SRC)return;
-  musicOn=!musicOn;
+  musicOn=!!on;
   btnMusic.classList.toggle('on',musicOn);
   btnMusic.setAttribute('aria-pressed',musicOn);
   if(musicOn){
     audioEl.volume=0.55;
-    try{await audioEl.play();}
-    catch{musicOn=false;btnMusic.classList.remove('on');btnMusic.setAttribute('aria-pressed','false');}
-  }else{audioEl.pause();audioEl.currentTime=0;}
-});
+    try{await audioEl.play();musicPlaying=true;}
+    catch{musicPlaying=false;if(!audioEl.paused)musicPlaying=true;}
+  }else{audioEl.pause();audioEl.currentTime=0;musicPlaying=false;}
+}
+async function tryStartMusic(){
+  if(!MUSIC_SRC||!MUSIC_DEFAULT_ON||musicPlaying)return;
+  await setMusic(true);
+}
+btnMusic.addEventListener('click',()=>setMusic(!musicOn));
+window.tryStartMusic=tryStartMusic;
 
 (()=>{
   if(!fwCanvas||window.matchMedia('(prefers-reduced-motion: reduce)').matches){if(btnFw)btnFw.disabled=true;return;}

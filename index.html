@@ -634,11 +634,12 @@ mandA.onload=drawCover;
 /* ---------- Optional music & fireworks ---------- */
 const MUSIC_SRC='wedding-music.mp3';
 const MUSIC_DEFAULT_ON=true;
+const MUSIC_PLAYBACK_RATE=1.5;
 const audioEl=document.getElementById('weddingMusic');
 const btnMusic=document.getElementById('musicToggle');
 const btnFw=document.getElementById('fwToggle');
 const fwCanvas=document.getElementById('fireworksCanvas');
-if(MUSIC_SRC)audioEl.src=MUSIC_SRC;
+if(MUSIC_SRC){audioEl.src=MUSIC_SRC;audioEl.playbackRate=MUSIC_PLAYBACK_RATE;}
 else btnMusic.disabled=true;
 let musicOn=!!(MUSIC_SRC&&MUSIC_DEFAULT_ON),musicPlaying=false,fwOn=false;
 
@@ -649,6 +650,7 @@ async function setMusic(on){
   btnMusic.setAttribute('aria-pressed',musicOn);
   if(musicOn){
     audioEl.volume=0.55;
+    audioEl.playbackRate=MUSIC_PLAYBACK_RATE;
     try{await audioEl.play();musicPlaying=true;}
     catch{musicPlaying=false;if(!audioEl.paused)musicPlaying=true;}
   }else{audioEl.pause();audioEl.currentTime=0;musicPlaying=false;}

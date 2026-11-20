@@ -29,7 +29,7 @@ Upload on JoyInvite dashboard → `shaadicanvas.joyinvite.in`
 
 ## Music
 
-1. **`wedding-music.mp3`** is included (Shri Raghuvar / *chakit chit* jaimala bhajan, ~5 min). Keep it in the same folder as `index.html`.
+1. **`wedding-music.mp3`** is included (Shri Raghuvar / *chakit chit* jaimala, ~3.5 min at **1.5× baked in**, ~1.5 MB compressed). Keep it in the same folder as `index.html`.
 2. Music is **on by default** and starts when guests tap **Open Invitation** (browser autoplay rules). Use the **Music** button (top-right) to turn it off.
 
 To use another file or URL, edit `MUSIC_SRC` in `index.html`.

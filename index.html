@@ -222,20 +222,20 @@ img{display:block;max-width:100%}
   .event.e-wedding .ev-rows span,.event.e-doli .ev-rows span{font-size:.92rem;line-height:1.5}
 }
 
-#venue,#rsvp{scroll-margin-top:calc(48px + env(safe-area-inset-top))}
+#venue,#rsvp{
+  scroll-margin-top:calc(48px + env(safe-area-inset-top));
+  min-height:calc(100svh - 80px);
+  min-height:calc(100dvh - 80px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:16px 16px 36px;
+  box-sizing:border-box;
+}
+#venue .vplain,#rsvp .rsvp-actions{width:100%;max-width:360px}
 @media (max-width:720px){
-  #venue,#rsvp{
-    min-height:calc(100svh - 76px);
-    min-height:calc(100dvh - 76px);
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    text-align:center;
-    padding:12px 16px 32px;
-    box-sizing:border-box;
-  }
-  #venue .vplain,#rsvp .rsvp-actions{width:100%;max-width:360px}
   #venue .venue-name{font-size:2rem;line-height:1.35}
   #venue .venue-detail{font-size:.7rem;line-height:1.6}
   #rsvp .lead{font-size:.88rem;margin-bottom:4px}
@@ -572,9 +572,10 @@ document.querySelectorAll('[data-c]').forEach(el=>{['tl','tr','bl','br'].forEach
 const AUTO_TOUR={
   startDelayMs:2800,
   dwellMs:2600,
+  dwellSnapMs:3600,
   minSegMs:4000,
-  maxSegMs:7800,
-  pxPerMs:.28,
+  maxSegMs:8200,
+  pxPerMs:.26,
   foldR:{start:1,mid:.9,fold4:1,fold5:.9,fold6:1.05,fold78:.75,end:.5,fold78From:6,fold78To:7,foldEndCount:4}
 };
 let foldPlanTotal=0,eventSnapsDone=new Set(),inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
@@ -619,25 +620,30 @@ function computeFoldPlanTotal(){
   }
   return total;
 }
-function sectionSnapTarget(cur,step){
-  const vh=viewH(),pad=Math.min(48,vh*.06);
+function docTop(el){return el.getBoundingClientRect().top+(window.pageYOffset||document.documentElement.scrollTop||0);}
+function snapScrollY(el,key){
+  const vh=viewH(),pad=Math.min(52,vh*.05);
+  const top=docTop(el),h=el.offsetHeight;
+  if(key==='venue'||key==='rsvp')return Math.max(0,Math.round(top+Math.max(0,(h-vh)*0.5)));
+  return Math.max(0,Math.round(top-pad));
+}
+function nextSectionSnap(cur,step){
+  const vh=viewH();
   for(const {sel,key} of SCROLL_SNAPS){
     if(eventSnapsDone.has(key))continue;
     const el=document.querySelector(sel);
     if(!el)continue;
-    const rect=el.getBoundingClientRect();
-    const top=rect.top+cur;
-    const bottom=top+rect.height;
-    const sectionFull=bottom-top>=vh*.72;
-    const lead=sectionFull?vh*.04:vh*.1;
-    const near=cur+step>=top-lead&&cur<bottom-vh*(sectionFull?0.38:0.35);
-    if(near){
-      eventSnapsDone.add(key);
-      if(sectionFull&&bottom-top<=vh+40){
-        return Math.max(0,Math.round(top+((bottom-top-vh)*0.5+pad)));
-      }
-      return Math.max(0,Math.round(top-pad));
+    const top=docTop(el);
+    if(top<=cur+16){
+      if(top+el.offsetHeight>cur+vh*.2)eventSnapsDone.add(key);
+      continue;
     }
+    const reach=Math.max(step,vh*(key==='venue'||key==='rsvp'?1.25:key==='wedding'||key==='doli'?1.05:0.9));
+    if(top<=cur+reach){
+      eventSnapsDone.add(key);
+      return {y:snapScrollY(el,key),key};
+    }
+    return null;
   }
   return null;
 }
@@ -645,13 +651,13 @@ function nextAutoScrollTarget(stepIndex){
   const cur=window.pageYOffset||document.documentElement.scrollTop||0;
   const end=pageEndY();
   if(cur>=end-6)return null;
-  let step=foldStepPx(stepIndex,foldPlanTotal);
-  const snap=sectionSnapTarget(cur,step);
-  if(snap!=null&&snap>cur+4)return snap;
+  const step=foldStepPx(stepIndex,foldPlanTotal);
+  const snap=nextSectionSnap(cur,step);
+  if(snap&&snap.y>cur+4)return snap;
   let target=Math.round(cur+step);
   if(target>=end-8)target=Math.round(end);
   if(target<=cur+2)target=Math.min(end,cur+Math.max(280,step));
-  return target;
+  return {y:target,key:null};
 }
 function stopSmoothScroll(){autoScrollActive=false;if(inviteScrollRaf){cancelAnimationFrame(inviteScrollRaf);inviteScrollRaf=0;}}
 function cancelInviteAutoScroll(){
@@ -687,7 +693,11 @@ function smoothScrollTo(targetY,durationMs,onDone){
   const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const start=window.pageYOffset||root.scrollTop||0;
   const dist=targetY-start;
-  const dur=durationMs||Math.min(AUTO_TOUR.maxSegMs,Math.max(AUTO_TOUR.minSegMs,Math.abs(dist)/AUTO_TOUR.pxPerMs));
+  let dur=durationMs;
+  if(!dur){
+    dur=Math.min(AUTO_TOUR.maxSegMs,Math.max(AUTO_TOUR.minSegMs,Math.abs(dist)/AUTO_TOUR.pxPerMs));
+    if(Math.abs(dist)>viewH()*.45)dur=Math.max(dur,5200);
+  }
   const finish=()=>{
     stopSmoothScroll();
     if(onDone)onDone();
@@ -707,15 +717,19 @@ function smoothScrollTo(targetY,durationMs,onDone){
 }
 function runAutoTourStep(){
   if(!autoTourOn)return;
-  const target=nextAutoScrollTarget(autoTourStep);
-  if(target==null){cancelInviteAutoScroll();return;}
-  smoothScrollTo(target,null,()=>{
+  const next=nextAutoScrollTarget(autoTourStep);
+  if(next==null){cancelInviteAutoScroll();return;}
+  const targetY=typeof next==='object'?next.y:next;
+  const snapped=typeof next==='object'&&next.key;
+  if(targetY==null){cancelInviteAutoScroll();return;}
+  smoothScrollTo(targetY,null,()=>{
     if(!autoTourOn)return;
     const end=pageEndY();
     const atEnd=(window.pageYOffset||0)>=end-8;
     autoTourStep++;
     if(atEnd||autoTourStep>=foldPlanTotal){autoTourOn=false;if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}return;}
-    autoTourTimer=setTimeout(()=>{autoTourTimer=0;runAutoTourStep();},AUTO_TOUR.dwellMs);
+    const wait=snapped?AUTO_TOUR.dwellSnapMs:AUTO_TOUR.dwellMs;
+    autoTourTimer=setTimeout(()=>{autoTourTimer=0;runAutoTourStep();},wait);
   });
 }
 function startFullPageAutoTour(){

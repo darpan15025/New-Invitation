@@ -265,6 +265,8 @@ footer .thanks{margin:20px auto 0;max-width:300px;font-style:italic;font-size:1.
 .dock a.on{color:var(--m3);background:linear-gradient(180deg,#f5e2ae,#c99a45)}
 .dock svg{width:20px;height:20px}
 
+#fireworksCanvas{position:fixed;inset:0;z-index:48;pointer-events:none;width:100%;height:100%}
+
 /* Petals */
 .petals{position:fixed;inset:0;z-index:50;pointer-events:none;display:flex;justify-content:center}
 .petals-in{position:relative;width:100%;max-width:var(--app);height:100%;overflow:hidden}
@@ -362,6 +364,8 @@ footer.royal{padding-top:70px}
 </section>
 
 <div class="petals"><div class="petals-in" id="petals"></div></div>
+<canvas id="fireworksCanvas" aria-hidden="true"></canvas>
+<audio id="weddingMusic" loop preload="auto" playsinline hidden></audio>
 
 <div class="app">
 <div class="invite" id="invite" aria-hidden="true">
@@ -706,6 +710,8 @@ document.getElementById('openInvite').addEventListener('click',()=>{
   startReveals();
   setTimeout(()=>{petalBurst(24);drawCover();},500);
   setInterval(()=>petalBurst(3),2600);
+  tryStartMusic();
+  tryStartFireworks();
   startFullPageAutoTour();
 });
 
@@ -818,6 +824,65 @@ new ResizeObserver(drawCover).observe(canvas);
 if(document.fonts)document.fonts.ready.then(drawCover);
 mandA.onload=drawCover;
 
+/* ---------- Background music & fireworks (hidden — no on/off UI) ---------- */
+const MUSIC_SRC='wedding-music.mp3';
+const MUSIC_DEFAULT_ON=true;
+const MUSIC_PLAYBACK_RATE=1;
+const audioEl=document.getElementById('weddingMusic');
+let musicPlaying=false;
+
+async function tryStartMusic(){
+  if(!MUSIC_SRC||!MUSIC_DEFAULT_ON||!audioEl||musicPlaying)return;
+  audioEl.src=MUSIC_SRC;
+  audioEl.volume=0.55;
+  audioEl.playbackRate=MUSIC_PLAYBACK_RATE;
+  try{await audioEl.play();musicPlaying=true;}catch{musicPlaying=false;}
+}
+
+(()=>{
+  const FIREWORKS_DEFAULT_ON=true;
+  const fwCanvas=document.getElementById('fireworksCanvas');
+  if(!fwCanvas||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const ctx=fwCanvas.getContext('2d');
+  let particles=[],spawnTimer=null,raf=0,running=false,fwOn=false;
+  const appRect=()=>fwCanvas.getBoundingClientRect();
+  function resize(){fwCanvas.width=Math.min(window.innerWidth,document.documentElement.clientWidth);fwCanvas.height=window.innerHeight;}
+  window.addEventListener('resize',resize);resize();
+  function burst(x,y,hue,count){
+    const n=count??22+Math.floor(Math.random()*14);
+    for(let i=0;i<n;i++){
+      const a=(Math.PI*2*i)/n+Math.random()*.3,sp=1.1+Math.random()*2.4;
+      particles.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,decay:.006+Math.random()*.005,hue:hue??38+Math.random()*18,size:2+Math.random()*1.6});
+    }
+  }
+  function loop(){
+    const W=fwCanvas.width,H=fwCanvas.height;
+    ctx.clearRect(0,0,W,H);
+    ctx.globalCompositeOperation='lighter';
+    particles=particles.filter(p=>p.life>0);
+    for(const p of particles){
+      p.x+=p.vx;p.y+=p.vy;p.vy+=.022;p.vx*=.996;p.life-=p.decay;
+      ctx.fillStyle=`hsla(${p.hue},95%,62%,${p.life})`;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.size,0,Math.PI*2);ctx.fill();
+    }
+    if(running||particles.length)raf=requestAnimationFrame(loop);
+    else cancelAnimationFrame(raf),raf=0;
+  }
+  function shoot(){
+    const r=appRect();
+    burst(r.left+Math.random()*r.width,r.top+(0.12+Math.random()*0.4)*r.height);
+  }
+  function startFw(){
+    if(fwOn)return;
+    fwOn=true;running=true;
+    if(!raf)loop();
+    shoot();shoot();
+    spawnTimer=setInterval(()=>{if(fwOn)shoot();},4000);
+  }
+  function tryStartFireworks(){if(FIREWORKS_DEFAULT_ON)startFw();}
+  window.tryStartFireworks=tryStartFireworks;
+  document.getElementById('openInvite').addEventListener('click',()=>{if(fwOn)setTimeout(shoot,400);});
+})();
 </script>
 </body>
 </html>

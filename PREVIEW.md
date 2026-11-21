@@ -27,6 +27,18 @@ Browser: http://127.0.0.1:8765/index.html
 Download: https://github.com/darpan15025/New-Invitation/raw/main/index.html  
 Upload on JoyInvite dashboard → `shaadicanvas.joyinvite.in`
 
+## PDF (same theme)
+
+Download: **https://github.com/darpan15025/New-Invitation/raw/main/docs/Tanya-Prabhat-Wedding-Invitation.pdf**
+
+To regenerate after editing `index.html`:
+
+```bash
+cd New-Invitation
+python3 -m http.server 8877 &
+node scripts/export-pdf.mjs
+```
+
 ## Music
 
 1. **`wedding-music.mp3`** is included (Shri Raghuvar / *chakit chit* jaimala, ~3.5 min at **1.5× baked in**, ~1.5 MB compressed). Keep it in the same folder as `index.html`.

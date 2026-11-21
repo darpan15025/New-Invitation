@@ -1,0 +1,23 @@
+{
+  "name": "new-invitation",
+  "version": "1.0.0",
+  "description": "Wedding invitation for **Aarav & Kiara** (`index.html`) — same as live site, with the **events week section removed** (Mehndi, Haldi, Sangeet, Wedding card, Reception).",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darpan15025/New-Invitation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/darpan15025/New-Invitation/issues"
+  },
+  "homepage": "https://github.com/darpan15025/New-Invitation#readme"
+}

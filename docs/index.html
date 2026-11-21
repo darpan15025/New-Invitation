@@ -564,21 +564,19 @@ const AUTO_TOUR={
   minSegMs:4000,
   maxSegMs:7800,
   pxPerMs:.28,
-  foldRatioStart:1,
-  foldRatioAfter:.9,
-  foldRatioEnd:.7,
-  foldStartCount:2,
-  foldEndCount:2
+  foldR:{start:1,mid:.9,fold4:.5,end:.6}
 };
 let foldTargets=[],inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
 function easeInOutQuint(t){return t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;}
 function viewH(){const vv=window.visualViewport;return Math.max(300,Math.round(vv?vv.height:window.innerHeight));}
 function pageEndY(){return Math.max(0,document.documentElement.scrollHeight-viewH());}
 function foldStepPx(foldIndex,totalFolds){
-  const h=viewH();
-  let ratio=AUTO_TOUR.foldRatioAfter;
-  if(foldIndex<AUTO_TOUR.foldStartCount)ratio=AUTO_TOUR.foldRatioStart;
-  else if(totalFolds>AUTO_TOUR.foldEndCount&&foldIndex>=totalFolds-AUTO_TOUR.foldEndCount)ratio=AUTO_TOUR.foldRatioEnd;
+  const h=viewH(),r=AUTO_TOUR.foldR;
+  let ratio=r.mid;
+  if(foldIndex<2)ratio=r.start;
+  else if(foldIndex===2)ratio=r.mid;
+  else if(foldIndex===3)ratio=r.fold4;
+  else if(foldIndex>=totalFolds-2&&foldIndex>3)ratio=r.end;
   return Math.max(280,Math.round(h*ratio));
 }
 function buildFoldTargets(){

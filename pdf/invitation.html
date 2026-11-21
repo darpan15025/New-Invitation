@@ -5,132 +5,131 @@
 <title>Tanya &amp; Prabhat — Wedding Invitation</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cinzel+Decorative:wght@700&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet"/>
 <style>
-@page{size:A4;margin:0}
+@page{size:A4 portrait;margin:0}
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --m1:#3d0a18;--m2:#2a0811;--m3:#1a040a;--m4:#120208;
+  --m1:#3d0a18;--m2:#2a0811;--m3:#1a040a;
   --gold:#c9a050;--gold-l:#f3dfa8;--txt:#f6ebe0;
 }
-html{font-size:11pt;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-body{font-family:"Cinzel",Georgia,serif;color:var(--txt);background:var(--m4)}
-.page{position:relative;width:210mm;min-height:297mm;page-break-after:always;background:radial-gradient(ellipse at 50% 0%,var(--m1) 0%,var(--m2) 42%,var(--m3) 78%);
-  overflow:hidden;padding:14mm 16mm}
-.page:last-child{page-break-after:auto}
-.page::before{content:"";position:absolute;inset:8mm;border:1px solid rgba(201,160,80,.55);pointer-events:none}
-.page::after{content:"";position:absolute;inset:11mm;border:1px solid rgba(201,160,80,.22);pointer-events:none}
-.inner{position:relative;z-index:1;height:100%;display:flex;flex-direction:column;align-items:center;text-align:center}
+html,body{width:210mm;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{font-family:"Cinzel",Georgia,serif;color:var(--txt);background:#000}
+
+/* Each slide = full A4 */
+.slide{position:relative;width:210mm;height:297mm;page-break-after:always;overflow:hidden;background:var(--m3)}
+.slide:last-child{page-break-after:auto}
+.slide img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.slide .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,2,8,.55) 0%,rgba(18,2,8,.15) 35%,rgba(18,2,8,.2) 55%,rgba(26,4,10,.92) 78%,#1a040a 100%)}
+.slide .frame{position:absolute;inset:10mm;border:1px solid rgba(201,160,80,.5);pointer-events:none;z-index:2}
+.slide .frame::after{content:"";position:absolute;inset:4mm;border:1px solid rgba(201,160,80,.22)}
+.copy{position:absolute;z-index:3;left:0;right:0;bottom:0;padding:14mm 16mm 18mm;text-align:center}
+
 .hindi{font-family:"Tiro Devanagari Hindi",serif;color:var(--gold-l);font-size:1.05rem}
 .eyebrow{font-size:.62rem;font-weight:700;letter-spacing:.38em;text-transform:uppercase;color:var(--gold)}
-.title{font-family:"Cinzel Decorative",serif;font-weight:700;font-size:1.85rem;color:var(--gold-l);line-height:1.25}
-.names{font-family:"Cinzel Decorative",serif;font-size:2.35rem;font-weight:700;color:var(--gold-l);line-height:1.2;margin:6px 0}
-.names .amp{display:block;font-family:"Cinzel",serif;font-style:italic;font-weight:500;font-size:1.6rem;margin:4px 0;color:var(--gold)}
-.foil{background:linear-gradient(105deg,#fff6dc 0%,#f3dfa8 20%,#c99a45 42%,#fff3cf 58%,#b88832 78%,#f7e6b6 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.date{font-size:.72rem;letter-spacing:.32em;color:var(--gold-l);margin-top:8px}
-.lead{max-width:140mm;margin:10px auto 0;font-size:.95rem;font-style:italic;line-height:1.65;color:rgba(246,235,224,.92)}
-.rule{width:70mm;height:1px;margin:14px auto;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.cover-img{width:100%;max-width:155mm;height:118mm;margin:12px 0 16px;border-radius:8px 8px 4px 4px;object-fit:cover;object-position:center 20%;
-  box-shadow:0 0 0 1px rgba(243,223,168,.4),0 12px 40px rgba(0,0,0,.45)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:168mm;margin-top:14px;text-align:center}
-.card{padding:14px 10px;border:1px solid rgba(201,160,80,.5);background:rgba(255,255,255,.04);border-radius:4px}
+.names{font-family:"Cinzel Decorative",serif;font-size:2.5rem;font-weight:700;line-height:1.15;color:var(--gold-l)}
+.names .amp{display:block;font-size:1.55rem;font-style:italic;font-weight:500;color:var(--gold);margin:4px 0}
+.foil{background:linear-gradient(105deg,#fff6dc,#f3dfa8 25%,#c99a45 45%,#fff3cf 60%,#b88832 80%,#f7e6b6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.date{font-size:.74rem;letter-spacing:.34em;color:var(--gold-l);margin-top:10px}
+.lead{margin-top:10px;font-size:.88rem;font-style:italic;line-height:1.6;color:rgba(246,235,224,.94)}
+.meta{text-align:left;font-size:.74rem;line-height:1.85;color:rgba(246,235,224,.95)}
+.meta strong{color:var(--gold);font-weight:700;letter-spacing:.12em;font-size:.62rem}
+.title{font-family:"Cinzel Decorative",serif;font-size:1.65rem;color:var(--gold-l)}
+
+/* Text-only slides */
+.slide.text-only{background:radial-gradient(ellipse at 50% 0%,var(--m1),var(--m2) 45%,var(--m3) 85%)}
+.slide.text-only .shade{background:transparent}
+.slide.text-only .copy{position:relative;inset:auto;padding:18mm 16mm 14mm;min-height:297mm;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin:18px 0;text-align:center}
+.card{padding:14px 10px;border:1px solid rgba(201,160,80,.5);background:rgba(0,0,0,.25)}
 .card small{display:block;font-size:.55rem;letter-spacing:.28em;color:var(--gold);margin-bottom:8px}
-.card h3{font-size:.78rem;font-weight:700;line-height:1.55;color:var(--gold-l)}
-.event{display:flex;gap:14px;align-items:flex-start;text-align:left;width:100%;max-width:172mm;margin-top:12px;padding:14px;border:1px solid rgba(201,160,80,.45);background:rgba(255,255,255,.035)}
-.event img{width:72mm;height:52mm;object-fit:cover;border-radius:4px;flex-shrink:0;border:1px solid rgba(201,160,80,.35)}
-.event .num{font-size:.55rem;letter-spacing:.3em;color:var(--gold)}
-.event h4{font-size:1rem;color:var(--gold-l);margin:4px 0 8px}
-.event p{font-size:.72rem;line-height:1.7;color:rgba(246,235,224,.9)}
-.event .tag{display:inline-block;margin-top:6px;font-size:.58rem;letter-spacing:.22em;color:var(--gold)}
-.venue-box{margin-top:18px;padding:16px 14px;width:100%;max-width:168mm;border:1px solid rgba(201,160,80,.55);background:rgba(0,0,0,.2)}
-.venue-box h3{font-family:"Cinzel Decorative",serif;font-size:1.35rem;color:var(--gold-l)}
-.venue-box p{margin-top:8px;font-size:.75rem;letter-spacing:.14em;line-height:1.8;color:var(--gold-l)}
-.rsvp{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:168mm}
-.rsvp div{padding:12px;border:1px solid rgba(201,160,80,.4);font-size:.7rem;line-height:1.6}
-.rsvp strong{display:block;color:var(--gold-l);font-size:.8rem;margin-bottom:4px}
-.footer{margin-top:auto;padding-top:20px;font-size:.52rem;letter-spacing:.35em;color:rgba(243,223,168,.75)}
+.card h3{font-size:.82rem;color:var(--gold-l)}
+.venue-box{margin-top:14px;padding:16px;width:100%;border:1px solid rgba(201,160,80,.55);background:rgba(0,0,0,.3)}
+.rsvp{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;margin-top:14px;text-align:center;font-size:.72rem;line-height:1.65}
+.rsvp strong{display:block;color:var(--gold-l);margin-bottom:4px}
 </style>
 </head>
 <body>
 
-<section class="page">
-  <div class="inner">
+<!-- 1 · Cover jaimala full page -->
+<section class="slide">
+  <img class="bg" src="../assets/hero-jaimala.webp" alt=""/>
+  <div class="shade"></div>
+  <div class="frame"></div>
+  <div class="copy">
     <p class="hindi">॥ श्री गणेशाय नमः ॥</p>
-    <p class="eyebrow" style="margin-top:10px">You are cordially invited</p>
-    <img class="cover-img" src="../assets/hero-jaimala.webp" alt=""/>
-    <h1 class="names"><span class="foil">Tanya</span><span class="amp">&amp;</span><span class="foil">Prabhat</span></h1>
+    <p class="eyebrow" style="margin-top:8px">You are cordially invited</p>
+    <h1 class="names" style="margin-top:14px"><span class="foil">Tanya</span><span class="amp">&amp;</span><span class="foil">Prabhat</span></h1>
     <p class="date">14 · 12 · 2026</p>
-    <div class="rule"></div>
-    <p class="lead">Together with their families, we invite you to celebrate this sacred union.</p>
-    <p class="footer">RESIDENCE · KRISHAN GANJ PILKHUWA</p>
+    <p class="lead">Together with their families</p>
+    <p class="eyebrow" style="margin-top:12px">Residence · Krishan Ganj Pilkhuwa</p>
   </div>
 </section>
 
-<section class="page">
-  <div class="inner">
-    <p class="hindi">शुभ विवाह</p>
-    <p class="eyebrow" style="margin-top:8px">A celebration of love</p>
-    <h2 class="title">Two Hearts,<br/>One Beautiful Beginning</h2>
-    <p class="lead" style="margin-top:16px">With immense joy in our hearts, we invite you to grace the wedding of our children and bless them as they begin a new chapter together.</p>
-    <div class="grid2">
-      <div class="card">
-        <small>The Bride</small>
-        <h3><span class="foil">Tanya</span></h3>
-        <p style="margin-top:8px;font-size:.68rem;line-height:1.6">Daughter of<br/><strong style="color:var(--gold-l)">Mrs. Babeeta Goel</strong><br/>&amp;<br/><strong style="color:var(--gold-l)">Mr. Rajeev Goel</strong></p>
-      </div>
-      <div class="card">
-        <small>The Groom</small>
-        <h3><span class="foil">Prabhat</span></h3>
-        <p style="margin-top:8px;font-size:.68rem;line-height:1.6">Son of<br/><strong style="color:var(--gold-l)">Mrs. Monika Goel</strong><br/>&amp;<br/><strong style="color:var(--gold-l)">Mr. Lokesh Mohan Goel</strong></p>
-      </div>
+<!-- 2 · Wedding baraat full page -->
+<section class="slide">
+  <img class="bg" src="../assets/wedding-baraat.webp" alt="" style="object-position:center 40%"/>
+  <div class="shade"></div>
+  <div class="frame"></div>
+  <div class="copy">
+    <p class="eyebrow">01 · Monday</p>
+    <h2 class="names" style="font-size:2rem;margin-top:6px"><span class="foil">Wedding</span></h2>
+    <div class="meta" style="margin-top:12px;display:inline-block;text-align:left">
+      <p><strong>DATE</strong><br/>14 December 2026</p>
+      <p style="margin-top:8px"><strong>CELEBRATIONS</strong><br/>Baraat · 7:00 PM · Dinner · 8:00 PM</p>
+      <p style="margin-top:8px"><strong>VENUE</strong><br/>Goel Regency</p>
     </div>
-    <p class="lead" style="margin-top:20px">Mrs. Babeeta Goel &amp; Mr. Rajeev Goel joyfully invite you to bless the couple.<br/>Mrs. Monika Goel &amp; Mr. Lokesh Mohan Goel and family share in this cherished celebration.</p>
   </div>
 </section>
 
-<section class="page">
-  <div class="inner" style="align-items:stretch">
-    <p class="eyebrow">The celebrations</p>
-    <h2 class="title" style="margin-top:6px">Wedding Events</h2>
-    <div class="rule"></div>
-    <article class="event">
-      <img src="../assets/wedding-baraat.webp" alt=""/>
-      <div>
-        <p class="num">01 · MONDAY</p>
-        <h4><span class="foil">Wedding</span></h4>
-        <p><strong style="color:var(--gold)">Date</strong> · 14 December 2026<br/>
-        <strong style="color:var(--gold)">Celebrations</strong> · Baraat 7:00 PM · Dinner 8:00 PM<br/>
-        <strong style="color:var(--gold)">Venue</strong> · Goel Regency</p>
-      </div>
-    </article>
-    <article class="event">
-      <img src="../assets/hero-jaimala.webp" alt=""/>
-      <div>
-        <p class="num">02 · TUESDAY</p>
-        <h4><span class="foil">Bheegi Palkein</span> <span style="font-size:.75rem;font-style:italic;color:var(--gold-l)">(Doli)</span></h4>
-        <p><strong style="color:var(--gold)">Date</strong> · 15 December 2026<br/>
-        <strong style="color:var(--gold)">Time</strong> · Taaron ki Chaaon Mei<br/>
-        <strong style="color:var(--gold)">Venue</strong> · Goel Regency</p>
-      </div>
-    </article>
-    <p class="lead" style="margin-top:16px;font-size:.82rem">Your gracious presence will make our celebration complete.</p>
+<!-- 3 · Doli jaimala full page -->
+<section class="slide">
+  <img class="bg" src="../assets/hero-jaimala.webp" alt="" style="object-position:center 22%"/>
+  <div class="shade"></div>
+  <div class="frame"></div>
+  <div class="copy">
+    <p class="eyebrow">02 · Tuesday</p>
+    <h2 class="names" style="font-size:1.75rem;margin-top:6px"><span class="foil">Bheegi Palkein</span></h2>
+    <p class="date" style="font-size:.65rem">(Doli)</p>
+    <div class="meta" style="margin-top:12px;display:inline-block;text-align:left">
+      <p><strong>DATE</strong><br/>15 December 2026</p>
+      <p style="margin-top:8px"><strong>TIME</strong><br/>Taaron ki Chaaon Mei</p>
+      <p style="margin-top:8px"><strong>VENUE</strong><br/>Goel Regency</p>
+    </div>
   </div>
 </section>
 
-<section class="page">
-  <div class="inner">
+<!-- 4 · Families -->
+<section class="slide text-only">
+  <div class="shade"></div>
+  <div class="frame"></div>
+  <div class="copy">
+    <p class="hindi">शुभ विवाह</p>
+    <p class="eyebrow" style="margin-top:10px">A celebration of love</p>
+    <h2 class="title" style="margin-top:8px">Two Hearts,<br/>One Beautiful Beginning</h2>
+    <p class="lead" style="max-width:155mm">With immense joy we invite you to grace the wedding of our children and bless them on this sacred journey.</p>
+    <div class="grid2">
+      <div class="card"><small>The Bride</small><h3><span class="foil">Tanya</span></h3><p style="font-size:.68rem;margin-top:8px;line-height:1.55">Mrs. Babeeta Goel<br/>&amp; Mr. Rajeev Goel</p></div>
+      <div class="card"><small>The Groom</small><h3><span class="foil">Prabhat</span></h3><p style="font-size:.68rem;margin-top:8px;line-height:1.55">Mrs. Monika Goel<br/>&amp; Mr. Lokesh Mohan Goel</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · Venue & RSVP -->
+<section class="slide text-only">
+  <div class="shade"></div>
+  <div class="frame"></div>
+  <div class="copy">
     <p class="eyebrow">Join us at</p>
     <h2 class="title">Venue</h2>
     <div class="venue-box">
-      <h3><span class="foil">Goel Regency</span></h3>
-      <p>PILLOR NO 41<br/>HAPUR ROAD, PILKHUWA, UP 245304</p>
+      <h3 class="title" style="font-size:1.25rem"><span class="foil">Goel Regency</span></h3>
+      <p class="date" style="margin-top:10px;line-height:1.9">PILLOR NO 41<br/>HAPUR ROAD, PILKHUWA<br/>UP 245304</p>
     </div>
-    <p class="eyebrow" style="margin:22px 0 10px">Kindly respond</p>
-    <h2 class="title" style="font-size:1.45rem">RSVP</h2>
+    <p class="eyebrow" style="margin-top:20px">RSVP</p>
     <div class="rsvp">
       <div><strong>Mr. Rajeev Goel</strong>+91 92584 72356</div>
       <div><strong>Mr. Darpan Goel</strong>+91 92591 25523</div>
     </div>
-    <p class="lead" style="margin-top:22px;font-size:.85rem">We can&apos;t wait to celebrate with you.</p>
-    <p class="footer" style="margin-top:28px">TANYA WEDS PRABHAT · 14 DECEMBER 2026</p>
+    <p class="eyebrow" style="margin-top:22px">TANYA WEDS PRABHAT</p>
   </div>
 </section>
 

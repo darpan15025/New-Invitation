@@ -564,7 +564,7 @@ const AUTO_TOUR={
   minSegMs:4000,
   maxSegMs:7800,
   pxPerMs:.28,
-  foldR:{start:1,mid:.9,fold4:.5,end:.6}
+  foldR:{start:1,mid:.9,half:.5,end:.6,halfFrom:3,halfTo:7}
 };
 let foldTargets=[],inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
 function easeInOutQuint(t){return t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;}

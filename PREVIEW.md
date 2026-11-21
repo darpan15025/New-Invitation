@@ -31,7 +31,9 @@ Upload on JoyInvite dashboard → `shaadicanvas.joyinvite.in`
 
 Download: **https://github.com/darpan15025/New-Invitation/raw/main/docs/Tanya-Prabhat-Wedding-Invitation.pdf**
 
-To regenerate after editing `index.html`:
+Lock: **do not change** live `index.html` without an explicit request — PDF is exported separately.
+
+To regenerate PDF after content changes:
 
 ```bash
 cd New-Invitation

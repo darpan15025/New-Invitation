@@ -564,21 +564,32 @@ const AUTO_TOUR={
   minSegMs:4000,
   maxSegMs:7800,
   pxPerMs:.28,
-  foldRatio:1
+  foldRatioStart:1.1,
+  foldRatioAfter:.9,
+  foldStartCount:3
 };
 let foldTargets=[],inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
 function easeInOutQuint(t){return t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;}
 function viewH(){const vv=window.visualViewport;return Math.max(300,Math.round(vv?vv.height:window.innerHeight));}
 function pageEndY(){return Math.max(0,document.documentElement.scrollHeight-viewH());}
+function foldStepPx(foldIndex){
+  const ratio=foldIndex<AUTO_TOUR.foldStartCount?AUTO_TOUR.foldRatioStart:AUTO_TOUR.foldRatioAfter;
+  return Math.max(280,Math.round(viewH()*ratio));
+}
 function buildFoldTargets(){
   const end=pageEndY();
-  const step=Math.max(280,Math.round(viewH()*AUTO_TOUR.foldRatio));
   const start=window.pageYOffset||document.documentElement.scrollTop||0;
   const out=[];
-  let y=start+step;
-  while(y<end-8){out.push(Math.round(y));y+=step;}
-  const last=out.length?out[out.length-1]:start;
-  if(end-last>24)out.push(Math.round(end));
+  let y=start;
+  for(let i=0;i<240;i++){
+    y+=foldStepPx(i);
+    if(y>=end-8){
+      const last=out.length?out[out.length-1]:start;
+      if(end-last>24)out.push(Math.round(end));
+      break;
+    }
+    out.push(Math.round(y));
+  }
   return out;
 }
 function stopSmoothScroll(){autoScrollActive=false;if(inviteScrollRaf){cancelAnimationFrame(inviteScrollRaf);inviteScrollRaf=0;}}

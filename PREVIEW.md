@@ -31,7 +31,8 @@ Upload on JoyInvite dashboard → `shaadicanvas.joyinvite.in`
 
 4-page **A4** card (maroon/gold theme, same text &amp; assets as the site). **Not** a copy of the live scroll page.
 
-Download: **https://github.com/darpan15025/New-Invitation/raw/main/docs/Tanya-Prabhat-Wedding-Invitation.pdf**
+Download (full-bleed carousel — **re-download if you still see black side bars; old file may be cached**):  
+**https://github.com/darpan15025/New-Invitation/raw/main/docs/Tanya-Prabhat-Wedding-Invitation.pdf?v=fullbleed**
 
 Regenerate:
 

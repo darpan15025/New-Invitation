@@ -27,19 +27,21 @@ Browser: http://127.0.0.1:8765/index.html
 Download: https://github.com/darpan15025/New-Invitation/raw/main/index.html  
 Upload on JoyInvite dashboard → `shaadicanvas.joyinvite.in`
 
-## PDF (same theme)
+## PDF (print invitation — not a website screenshot)
+
+4-page **A4** card (maroon/gold theme, same text &amp; assets as the site). **Not** a copy of the live scroll page.
 
 Download: **https://github.com/darpan15025/New-Invitation/raw/main/docs/Tanya-Prabhat-Wedding-Invitation.pdf**
 
-Lock: **do not change** live `index.html` without an explicit request — PDF is exported separately.
-
-To regenerate PDF after content changes:
+Regenerate:
 
 ```bash
 cd New-Invitation
 python3 -m http.server 8877 &
-node scripts/export-pdf.mjs
+node scripts/build-invitation-pdf.mjs
 ```
+
+Source layout: `pdf/invitation.html` (edit this for PDF-only changes — **do not** change `index.html` for the final live link).
 
 ## Music
 

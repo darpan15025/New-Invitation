@@ -1,3 +1,7 @@
+/**
+ * @deprecated Use scripts/build-invitation-pdf.mjs for the print-designed PDF.
+ * This script printed the live website; the invitation PDF is now separate.
+ */
 import { chromium } from 'playwright';
 import { fileURLToPath } from 'url';
 import path from 'path';

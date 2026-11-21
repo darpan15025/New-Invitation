@@ -7,6 +7,6 @@ Wedding invitation for **Tanya & Prabhat** (`index.html`) — same theme as the 
 
 **JoyInvite upload file:** https://github.com/darpan15025/New-Invitation/raw/main/index.html
 
-**PDF download:** https://github.com/darpan15025/New-Invitation/raw/main/docs/Tanya-Prabhat-Wedding-Invitation.pdf
+**PDF (4-page print invite):** https://github.com/darpan15025/New-Invitation/raw/main/docs/Tanya-Prabhat-Wedding-Invitation.pdf — built from `pdf/invitation.html`, not the live site.
 
 htmlpreview often **does not open** this file (size + embedded images). Use GitHub Pages or local `python3 -m http.server`.

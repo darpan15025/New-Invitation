@@ -7,6 +7,7 @@
     "doc": "docs"
   },
   "scripts": {
+    "export:pdf": "node scripts/export-pdf.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/darpan15025/New-Invitation/issues"
   },
-  "homepage": "https://github.com/darpan15025/New-Invitation#readme"
+  "homepage": "https://github.com/darpan15025/New-Invitation#readme",
+  "dependencies": {
+    "playwright": "^1.65.1"
+  }
 }

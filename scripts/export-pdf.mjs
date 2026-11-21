@@ -4,7 +4,9 @@ import path from 'path';
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const out = path.join(root, 'Tanya-Prabhat-Wedding-Invitation.pdf');
-const url = process.env.INVITE_URL || 'http://127.0.0.1:8877/index.html';
+const outDocs = path.join(root, 'docs', 'Tanya-Prabhat-Wedding-Invitation.pdf');
+const url =
+  process.env.INVITE_URL || 'https://prabhatandtanya.vercel.app/';
 
 const browser = await chromium.launch();
 const page = await browser.newPage({
@@ -13,12 +15,19 @@ const page = await browser.newPage({
 });
 
 await page.goto(url, { waitUntil: 'networkidle', timeout: 120000 });
-await page.waitForTimeout(400);
+await page.evaluate(() => document.fonts?.ready);
+await page.waitForTimeout(600);
 
 const open = page.locator('#openInvite');
 if (await open.count()) {
   await open.click();
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(1400);
+}
+
+const reveal = page.locator('#revealDate');
+if (await reveal.isVisible()) {
+  await reveal.click();
+  await page.waitForTimeout(400);
 }
 
 await page.evaluate(() => {
@@ -47,5 +56,14 @@ await page.pdf({
   preferCSSPageSize: false,
 });
 
+await page.pdf({
+  path: outDocs,
+  width: '430px',
+  height: `${height}px`,
+  printBackground: true,
+  margin: { top: 0, right: 0, bottom: 0, left: 0 },
+  preferCSSPageSize: false,
+});
+
 await browser.close();
-console.log('Wrote', out, 'height', height);
+console.log('Wrote', out, 'and', outDocs, 'height', height);

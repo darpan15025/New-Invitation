@@ -564,7 +564,7 @@ const AUTO_TOUR={
   minSegMs:4000,
   maxSegMs:7800,
   pxPerMs:.28,
-  foldR:{start:1,mid:.9,fold45:.8,end:.5,fold45From:3,fold45To:4}
+  foldR:{start:1,mid:.9,fold4:1,fold5:.8,end:.5}
 };
 let foldPlanTotal=0,inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
 function easeInOutQuint(t){return t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;}
@@ -575,8 +575,9 @@ function foldStepPx(foldIndex,totalFolds){
   let ratio=r.mid;
   if(foldIndex<2)ratio=r.start;
   else if(foldIndex===2)ratio=r.mid;
-  else if(foldIndex>=r.fold45From&&foldIndex<=r.fold45To)ratio=r.fold45;
-  else if(foldIndex>=totalFolds-2&&foldIndex>r.fold45To)ratio=r.end;
+  else if(foldIndex===3)ratio=r.fold4;
+  else if(foldIndex===4)ratio=r.fold5;
+  else if(foldIndex>=totalFolds-2&&foldIndex>4)ratio=r.end;
   return Math.max(280,Math.round(h*ratio));
 }
 function computeFoldPlanTotal(){

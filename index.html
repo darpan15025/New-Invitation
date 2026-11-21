@@ -566,7 +566,7 @@ const AUTO_TOUR={
   pxPerMs:.28,
   foldR:{start:1,mid:.9,half:.5,end:.6,halfFrom:3,halfTo:7}
 };
-let foldTargets=[],inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
+let foldPlanTotal=0,inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
 function easeInOutQuint(t){return t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;}
 function viewH(){const vv=window.visualViewport;return Math.max(300,Math.round(vv?vv.height:window.innerHeight));}
 function pageEndY(){return Math.max(0,document.documentElement.scrollHeight-viewH());}
@@ -579,35 +579,42 @@ function foldStepPx(foldIndex,totalFolds){
   else if(foldIndex>=totalFolds-2&&foldIndex>r.halfTo)ratio=r.end;
   return Math.max(280,Math.round(h*ratio));
 }
-function buildFoldTargets(){
+function computeFoldPlanTotal(){
   const end=pageEndY();
   const start=window.pageYOffset||document.documentElement.scrollTop||0;
-  let total=Math.max(4,Math.ceil((end-start)/(viewH()*.88)));
-  let out=[];
+  let total=Math.max(8,Math.ceil((end-start)/(viewH()*.75)));
   for(let iter=0;iter<16;iter++){
-    out=[];
-    let y=start;
+    let steps=0,y=start;
     for(let i=0;i<240;i++){
+      const prev=y;
       y+=foldStepPx(i,total);
       if(y>=end-8){
-        const last=out.length?out[out.length-1]:start;
-        if(end-last>24)out.push(Math.round(end));
+        if(end-prev>24)steps++;
         break;
       }
-      out.push(Math.round(y));
+      steps++;
     }
-    const newTotal=out.length;
-    if(newTotal===total)break;
-    total=newTotal;
+    if(steps===total)return steps;
+    total=steps;
   }
-  return out;
+  return total;
+}
+function nextAutoScrollTarget(stepIndex){
+  const cur=window.pageYOffset||document.documentElement.scrollTop||0;
+  const end=pageEndY();
+  if(cur>=end-6)return null;
+  let step=foldStepPx(stepIndex,foldPlanTotal);
+  let target=Math.round(cur+step);
+  if(target>=end-8)target=Math.round(end);
+  if(target<=cur+2)target=Math.min(end,cur+Math.max(280,step));
+  return target;
 }
 function stopSmoothScroll(){autoScrollActive=false;if(inviteScrollRaf){cancelAnimationFrame(inviteScrollRaf);inviteScrollRaf=0;}}
 function cancelInviteAutoScroll(){
   stopSmoothScroll();
   autoTourOn=false;
   autoTourStep=0;
-  foldTargets=[];
+  foldPlanTotal=0;
   if(autoTourTimer){clearTimeout(autoTourTimer);autoTourTimer=0;}
   if(inviteScrollTimer){clearTimeout(inviteScrollTimer);inviteScrollTimer=0;}
   if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}
@@ -655,19 +662,21 @@ function smoothScrollTo(targetY,durationMs,onDone){
 }
 function runAutoTourStep(){
   if(!autoTourOn)return;
-  const target=foldTargets[autoTourStep];
+  const target=nextAutoScrollTarget(autoTourStep);
   if(target==null){cancelInviteAutoScroll();return;}
   smoothScrollTo(target,null,()=>{
     if(!autoTourOn)return;
+    const end=pageEndY();
+    const atEnd=(window.pageYOffset||0)>=end-8;
     autoTourStep++;
-    if(autoTourStep>=foldTargets.length){autoTourOn=false;if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}return;}
+    if(atEnd||autoTourStep>=foldPlanTotal){autoTourOn=false;if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}return;}
     autoTourTimer=setTimeout(()=>{autoTourTimer=0;runAutoTourStep();},AUTO_TOUR.dwellMs);
   });
 }
 function startFullPageAutoTour(){
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  foldTargets=buildFoldTargets();
-  if(!foldTargets.length)return;
+  foldPlanTotal=computeFoldPlanTotal();
+  if(!foldPlanTotal)return;
   autoTourOn=true;
   autoTourStep=0;
   armAutoScrollCancel();

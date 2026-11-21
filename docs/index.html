@@ -566,29 +566,41 @@ const AUTO_TOUR={
   pxPerMs:.28,
   foldRatioStart:1,
   foldRatioAfter:.9,
-  foldStartCount:2
+  foldRatioEnd:.7,
+  foldStartCount:2,
+  foldEndCount:2
 };
 let foldTargets=[],inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
 function easeInOutQuint(t){return t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;}
 function viewH(){const vv=window.visualViewport;return Math.max(300,Math.round(vv?vv.height:window.innerHeight));}
 function pageEndY(){return Math.max(0,document.documentElement.scrollHeight-viewH());}
-function foldStepPx(foldIndex){
-  const ratio=foldIndex<AUTO_TOUR.foldStartCount?AUTO_TOUR.foldRatioStart:AUTO_TOUR.foldRatioAfter;
-  return Math.max(280,Math.round(viewH()*ratio));
+function foldStepPx(foldIndex,totalFolds){
+  const h=viewH();
+  let ratio=AUTO_TOUR.foldRatioAfter;
+  if(foldIndex<AUTO_TOUR.foldStartCount)ratio=AUTO_TOUR.foldRatioStart;
+  else if(totalFolds>AUTO_TOUR.foldEndCount&&foldIndex>=totalFolds-AUTO_TOUR.foldEndCount)ratio=AUTO_TOUR.foldRatioEnd;
+  return Math.max(280,Math.round(h*ratio));
 }
 function buildFoldTargets(){
   const end=pageEndY();
   const start=window.pageYOffset||document.documentElement.scrollTop||0;
-  const out=[];
-  let y=start;
-  for(let i=0;i<240;i++){
-    y+=foldStepPx(i);
-    if(y>=end-8){
-      const last=out.length?out[out.length-1]:start;
-      if(end-last>24)out.push(Math.round(end));
-      break;
+  let total=Math.max(4,Math.ceil((end-start)/(viewH()*.88)));
+  let out=[];
+  for(let iter=0;iter<16;iter++){
+    out=[];
+    let y=start;
+    for(let i=0;i<240;i++){
+      y+=foldStepPx(i,total);
+      if(y>=end-8){
+        const last=out.length?out[out.length-1]:start;
+        if(end-last>24)out.push(Math.round(end));
+        break;
+      }
+      out.push(Math.round(y));
     }
-    out.push(Math.round(y));
+    const newTotal=out.length;
+    if(newTotal===total)break;
+    total=newTotal;
   }
   return out;
 }

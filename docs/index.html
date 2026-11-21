@@ -222,6 +222,26 @@ img{display:block;max-width:100%}
   .event.e-wedding .ev-rows span,.event.e-doli .ev-rows span{font-size:.92rem;line-height:1.5}
 }
 
+#venue,#rsvp{scroll-margin-top:calc(48px + env(safe-area-inset-top))}
+@media (max-width:720px){
+  #venue,#rsvp{
+    min-height:calc(100svh - 76px);
+    min-height:calc(100dvh - 76px);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    padding:12px 16px 32px;
+    box-sizing:border-box;
+  }
+  #venue .vplain,#rsvp .rsvp-actions{width:100%;max-width:360px}
+  #venue .venue-name{font-size:2rem;line-height:1.35}
+  #venue .venue-detail{font-size:.7rem;line-height:1.6}
+  #rsvp .lead{font-size:.88rem;margin-bottom:4px}
+  #rsvp .rsvp-actions{gap:12px;margin-top:18px}
+}
+
 /* Countdown */
 .cd{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:28px}
 .cd div{position:relative;padding:20px 2px 12px;border:1px solid rgba(201,160,80,.55);border-radius:60px 60px 6px 6px;background:rgba(255,255,255,.04)}
@@ -558,7 +578,12 @@ const AUTO_TOUR={
   foldR:{start:1,mid:.9,fold4:1,fold5:.9,fold6:1.05,fold78:.75,end:.5,fold78From:6,fold78To:7,foldEndCount:4}
 };
 let foldPlanTotal=0,eventSnapsDone=new Set(),inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
-const EVENT_SNAPS=[{sel:'#ev-wedding',key:'wedding'},{sel:'#ev-doli',key:'doli'}];
+const SCROLL_SNAPS=[
+  {sel:'#ev-wedding',key:'wedding'},
+  {sel:'#ev-doli',key:'doli'},
+  {sel:'#venue',key:'venue'},
+  {sel:'#rsvp',key:'rsvp'}
+];
 function easeInOutQuint(t){return t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;}
 function viewH(){const vv=window.visualViewport;return Math.max(300,Math.round(vv?vv.height:window.innerHeight));}
 function pageEndY(){return Math.max(0,document.documentElement.scrollHeight-viewH());}
@@ -594,18 +619,23 @@ function computeFoldPlanTotal(){
   }
   return total;
 }
-function eventSnapTarget(cur,step){
-  const vh=viewH(),pad=Math.min(52,vh*.07);
-  for(const {sel,key} of EVENT_SNAPS){
+function sectionSnapTarget(cur,step){
+  const vh=viewH(),pad=Math.min(48,vh*.06);
+  for(const {sel,key} of SCROLL_SNAPS){
     if(eventSnapsDone.has(key))continue;
     const el=document.querySelector(sel);
     if(!el)continue;
     const rect=el.getBoundingClientRect();
     const top=rect.top+cur;
     const bottom=top+rect.height;
-    const near=cur+step>=top-vh*.15&&cur<bottom-vh*.35;
+    const sectionFull=bottom-top>=vh*.72;
+    const lead=sectionFull?vh*.04:vh*.1;
+    const near=cur+step>=top-lead&&cur<bottom-vh*(sectionFull?0.38:0.35);
     if(near){
       eventSnapsDone.add(key);
+      if(sectionFull&&bottom-top<=vh+40){
+        return Math.max(0,Math.round(top+((bottom-top-vh)*0.5+pad)));
+      }
       return Math.max(0,Math.round(top-pad));
     }
   }
@@ -616,7 +646,7 @@ function nextAutoScrollTarget(stepIndex){
   const end=pageEndY();
   if(cur>=end-6)return null;
   let step=foldStepPx(stepIndex,foldPlanTotal);
-  const snap=eventSnapTarget(cur,step);
+  const snap=sectionSnapTarget(cur,step);
   if(snap!=null&&snap>cur+4)return snap;
   let target=Math.round(cur+step);
   if(target>=end-8)target=Math.round(end);

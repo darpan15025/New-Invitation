@@ -253,6 +253,23 @@ footer .thanks{margin:20px auto 0;max-width:300px;font-style:italic;font-size:1.
 .fx-btn.on svg{color:var(--m3)}
 .fx-btn:disabled{opacity:.4;cursor:not-allowed}
 
+/* Mobile: mantra + music/fireworks — no overlap on opening & first scroll */
+@media (max-width:640px){
+  .fx-btn{min-width:44px;padding:8px 9px 7px}
+  .fx-btn span{display:none}
+  .fx-panel{gap:4px;padding:5px}
+  body.locked .opening-top{
+    top:calc(74px + env(safe-area-inset-top));
+    left:max(12px,calc((100vw - var(--app))/2 + 12px));
+    right:max(12px,calc((100vw - var(--app))/2 + 12px));
+    padding:0 6px;
+  }
+  body.locked .opening-top .hindi{font-size:.98rem;line-height:1.4;margin:0}
+  body:not(.locked) #invitation{padding-top:calc(52px + env(safe-area-inset-top))}
+  body:not(.locked) #invitation>.hindi.rv{margin-top:0}
+  html:not(.locked){scroll-padding-top:calc(58px + env(safe-area-inset-top))}
+}
+
 /* Petals */
 .petals{position:fixed;inset:0;z-index:50;pointer-events:none;display:flex;justify-content:center}
 .petals-in{position:relative;width:100%;max-width:var(--app);height:100%;overflow:hidden}

@@ -560,24 +560,32 @@ document.querySelectorAll('[data-c]').forEach(el=>{['tl','tr','bl','br'].forEach
 /* ---------- Smooth scroll + full-page auto tour ---------- */
 const AUTO_TOUR={
   startDelayMs:2800,
-  dwellMs:2400,
-  minSegMs:3200,
-  maxSegMs:6200,
-  pxPerMs:.38,
-  anchors:['#invitation','#events','#venue','#rsvp',{end:true}]
+  dwellMs:2000,
+  minSegMs:2800,
+  maxSegMs:5800,
+  pxPerMs:.42,
+  foldRatio:.82
 };
-let inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
+let foldTargets=[],inviteScrollRaf=0,inviteScrollTimer=0,autoTourTimer=0,autoTourStep=0,autoTourOn=false,autoScrollActive=false,releaseAutoScrollCancel=null;
 function easeInOutQuint(t){return t<.5?16*t*t*t*t*t:1-Math.pow(-2*t+2,5)/2;}
-function scrollTopFor(el){
-  const pad=Math.min(56,window.innerHeight*.09);
-  return Math.max(0,el.getBoundingClientRect().top+window.scrollY-pad);
-}
 function pageEndY(){return Math.max(0,document.documentElement.scrollHeight-window.innerHeight);}
+function buildFoldTargets(){
+  const end=pageEndY();
+  const step=Math.max(300,Math.round(window.innerHeight*AUTO_TOUR.foldRatio));
+  const start=window.pageYOffset||document.documentElement.scrollTop||0;
+  const out=[];
+  let y=start+step;
+  while(y<end-44){out.push(Math.round(y));y+=step;}
+  const last=out.length?out[out.length-1]:start;
+  if(end-last>64)out.push(Math.round(end));
+  return out;
+}
 function stopSmoothScroll(){autoScrollActive=false;if(inviteScrollRaf){cancelAnimationFrame(inviteScrollRaf);inviteScrollRaf=0;}}
 function cancelInviteAutoScroll(){
   stopSmoothScroll();
   autoTourOn=false;
   autoTourStep=0;
+  foldTargets=[];
   if(autoTourTimer){clearTimeout(autoTourTimer);autoTourTimer=0;}
   if(inviteScrollTimer){clearTimeout(inviteScrollTimer);inviteScrollTimer=0;}
   if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}
@@ -623,26 +631,21 @@ function smoothScrollTo(targetY,durationMs,onDone){
   };
   inviteScrollRaf=requestAnimationFrame(tick);
 }
-function autoTourTarget(step){
-  const cfg=AUTO_TOUR.anchors[step];
-  if(!cfg)return null;
-  if(typeof cfg==='string'){const el=document.querySelector(cfg);return el?scrollTopFor(el):null;}
-  if(cfg&&cfg.end)return pageEndY();
-  return null;
-}
 function runAutoTourStep(){
   if(!autoTourOn)return;
-  const target=autoTourTarget(autoTourStep);
+  const target=foldTargets[autoTourStep];
   if(target==null){cancelInviteAutoScroll();return;}
   smoothScrollTo(target,null,()=>{
     if(!autoTourOn)return;
     autoTourStep++;
-    if(autoTourStep>=AUTO_TOUR.anchors.length){autoTourOn=false;if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}return;}
+    if(autoTourStep>=foldTargets.length){autoTourOn=false;if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}return;}
     autoTourTimer=setTimeout(()=>{autoTourTimer=0;runAutoTourStep();},AUTO_TOUR.dwellMs);
   });
 }
 function startFullPageAutoTour(){
   if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  foldTargets=buildFoldTargets();
+  if(!foldTargets.length)return;
   autoTourOn=true;
   autoTourStep=0;
   armAutoScrollCancel();

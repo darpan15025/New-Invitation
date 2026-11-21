@@ -638,7 +638,22 @@ function nextSectionSnap(cur,step){
       if(top+el.offsetHeight>cur+vh*.2)eventSnapsDone.add(key);
       continue;
     }
-    const reach=Math.max(step,vh*(key==='venue'||key==='rsvp'?1.25:key==='wedding'||key==='doli'?1.05:0.9));
+    if(key==='doli'){
+      const weddingEl=document.querySelector('#ev-wedding');
+      if(weddingEl&&eventSnapsDone.has('wedding')){
+        if(top-docTop(weddingEl)<vh*1.35){
+          eventSnapsDone.add('doli');
+          continue;
+        }
+      }
+      const r=el.getBoundingClientRect();
+      if(r.top<vh*.62&&r.bottom>vh*.28){
+        eventSnapsDone.add('doli');
+        continue;
+      }
+    }
+    const reach=Math.max(step,vh*(key==='venue'||key==='rsvp'?1.25:key==='wedding'?1.05:0.9));
+    if(key==='doli')break;
     if(top<=cur+reach){
       eventSnapsDone.add(key);
       return {y:snapScrollY(el,key),key};

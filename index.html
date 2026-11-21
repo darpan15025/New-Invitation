@@ -235,11 +235,19 @@ img{display:block;max-width:100%}
   box-sizing:border-box;
 }
 #venue .vplain,#rsvp .rsvp-actions{width:100%;max-width:360px}
+@media (max-width:768px){
+  #rsvp{
+    min-height:auto;
+    justify-content:flex-start;
+    padding:44px 16px 56px;
+  }
+  #rsvp .rsvp-actions{margin-top:18px;padding-bottom:8px}
+}
 @media (max-width:720px){
   #venue .venue-name{font-size:2rem;line-height:1.35}
   #venue .venue-detail{font-size:.7rem;line-height:1.6}
   #rsvp .lead{font-size:.88rem;margin-bottom:4px}
-  #rsvp .rsvp-actions{gap:12px;margin-top:18px}
+  #rsvp .rsvp-actions{gap:12px}
 }
 
 /* Countdown */
@@ -627,6 +635,7 @@ function docTop(el){return el.getBoundingClientRect().top+(window.pageYOffset||d
 function snapScrollY(el,key){
   const vh=viewH(),pad=Math.min(52,vh*.05);
   const top=docTop(el),h=el.offsetHeight;
+  if(key==='rsvp'&&isMobileTour())return Math.max(0,Math.round(top-pad));
   if(key==='venue'||key==='rsvp')return Math.max(0,Math.round(top+Math.max(0,(h-vh)*0.5)));
   return Math.max(0,Math.round(top-pad));
 }
@@ -665,6 +674,12 @@ function nextSectionSnap(cur,step){
   }
   return null;
 }
+function tourNeedsTail(cur){
+  const end=pageEndY();
+  if(cur>=end-12)return false;
+  if(isMobileTour())return cur<end-Math.min(140,viewH()*.12);
+  return autoTourStep>=foldPlanTotal&&cur<end-32;
+}
 function nextAutoScrollTarget(stepIndex){
   const cur=window.pageYOffset||document.documentElement.scrollTop||0;
   const end=pageEndY();
@@ -672,6 +687,10 @@ function nextAutoScrollTarget(stepIndex){
   const step=foldStepPx(stepIndex,foldPlanTotal);
   const snap=nextSectionSnap(cur,step);
   if(snap&&snap.y>cur+4)return snap;
+  if(stepIndex>=foldPlanTotal&&tourNeedsTail(cur)){
+    return {y:Math.round(Math.min(end,cur+step)),key:'tail'};
+  }
+  if(stepIndex>=foldPlanTotal)return null;
   let target=Math.round(cur+step);
   if(target>=end-8)target=Math.round(end);
   if(target<=cur+2)target=Math.min(end,cur+Math.max(280,step));
@@ -735,17 +754,22 @@ function smoothScrollTo(targetY,durationMs,onDone){
 }
 function runAutoTourStep(){
   if(!autoTourOn)return;
-  const next=nextAutoScrollTarget(autoTourStep);
+  let next=nextAutoScrollTarget(autoTourStep);
+  const cur=window.pageYOffset||0;
+  if(next==null&&tourNeedsTail(cur)){
+  next={y:Math.round(pageEndY()),key:'tail'};
+  }
   if(next==null){cancelInviteAutoScroll();return;}
   const targetY=typeof next==='object'?next.y:next;
-  const snapped=typeof next==='object'&&next.key;
+  const snapped=typeof next==='object'&&next.key&&next.key!=='tail';
   if(targetY==null){cancelInviteAutoScroll();return;}
   smoothScrollTo(targetY,null,()=>{
     if(!autoTourOn)return;
     const end=pageEndY();
-    const atEnd=(window.pageYOffset||0)>=end-8;
+    const now=window.pageYOffset||0;
+    const atEnd=now>=end-8;
     autoTourStep++;
-    if(atEnd||autoTourStep>=foldPlanTotal){autoTourOn=false;if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}return;}
+    if(atEnd||!tourNeedsTail(now)){autoTourOn=false;if(releaseAutoScrollCancel){releaseAutoScrollCancel();releaseAutoScrollCancel=null;}return;}
     const wait=snapped?AUTO_TOUR.dwellSnapMs:AUTO_TOUR.dwellMs;
     autoTourTimer=setTimeout(()=>{autoTourTimer=0;runAutoTourStep();},wait);
   });
